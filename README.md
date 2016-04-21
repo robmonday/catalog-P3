@@ -1,7 +1,10 @@
 #Item Catalogue
 This project is part of the Udacity Fullstack Nanodegree program.  It represents my independent work, in pursuing the nanodegree certification.
 
-##Installation Instructions
+##Instructions
+Use this file by visiting '/restaurant' and '/menuitem' local host paths to view output.
+
+##Installation
 To run the code, simply follow these steps:
 <ol>
 	<li> Download all files into a working directory
