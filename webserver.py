@@ -83,7 +83,8 @@ class webServerHandler(BaseHTTPRequestHandler):
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
-				restaurant_edit = session.query(Restaurant).filter_by(id = 1) #just using id 1 for now
+				restaurant_id = self.path.split('/')[-2]
+				restaurant_edit = session.query(Restaurant).filter_by(id = restaurant_id) #just using id 1 for now
 				output = ""
 				output += "<html><body>"
 				output += "<h1>%s</h1>" % restaurant_edit[0].name		
@@ -99,7 +100,8 @@ class webServerHandler(BaseHTTPRequestHandler):
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
-				restaurant_delete = session.query(Restaurant).filter_by(id = 1) #just using id 1 for now
+				restaurant_id = self.path.split('/')[-2]
+				restaurant_delete = session.query(Restaurant).filter_by(id = restaurant_id) #just using id 1 for now
 				output = ""
 				output += "<html><body>"
 				output += "<h1>%s</h1>" % restaurant_delete[0].name		
