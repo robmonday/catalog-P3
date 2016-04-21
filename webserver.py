@@ -48,14 +48,16 @@ class webServerHandler(BaseHTTPRequestHandler):
 				print output
 				return
 
-			if self.path.endswith("/restaurant"):
+			if self.path.endswith("/restaurants"):
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
 				restaurants = session.query(Restaurant).all()	# SQLalchemy request for restaurant list
 				output = ""
 				output += "<html><body>"
-				output += "<h1>List of Restaurants:</h1>"				
+				output += "<h1>List of Restaurants</h1>"				
+				output += "<a href='/restaurants/new'>Add New Restaurant</a>"				
+				output += "<h2>Current Set</h2>"					
 				for restaurant in restaurants:					# Adding restaurant query results to output
 					output += restaurant.name+'<br><a href="#">Edit</a><br><a href="#">Delete</a><p>'
 				output += "</body></html>"	
@@ -63,7 +65,20 @@ class webServerHandler(BaseHTTPRequestHandler):
 				print output
 				return
 
-			if self.path.endswith("/menuitem"):  # Rob added this as extra credit
+			if self.path.endswith("/restaurants/new"):
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+				output = ""
+				output += "<html><body>"
+				output += "<h1>Create New Restaurant</h1>"				
+				output += "<form method='POST' enctype='multipart/form-data' action='/restaurants/new'><input name='newRestaurantName' placeholder='New Restaurant Here'><input type='submit' value='Create'></form>"				
+				output += "</body></html>"	
+				self.wfile.write(output)
+				print output
+				return				
+
+			if self.path.endswith("/menuitems"):  # Rob added this as extra credit
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
@@ -78,30 +93,49 @@ class webServerHandler(BaseHTTPRequestHandler):
 				output += "</body></html>"	
 				self.wfile.write(output)
 				print output
-				return	
+				return
+			else:
+				self.send_error(404, "Rob hasn't defined this path yet")
 
 		except IOError:
 			self.send_error(404, "File Not Found %s" % self.path)
 
 	def do_POST(self):
 		try:
-			self.send_response(301)
-			self.end_headers()
-			ctype, pdict = cgi.parse_header(
-				self.headers.getheader('content-type'))
-			if ctype == 'multipart/form-data':
-				fields = cgi.parse_multipart(self.rfile, pdict)
-				messagecontent = fields.get('message')
-			output = ""
-			output += "<html><body>"
-			output += "<h2> Okay, how about this: </h2>"
-			output += "<h1> %s </h1>" % messagecontent[0]
-			output += """<form method='POST' enctype='multipart/form-data' action='/hello'>
-			<h2>What would you like me to say?</h2><input name='message' type='text'>
-			<input type='submit' value='Submit'></form>"""	
-			output += "</body></html>"	
-			self.wfile.write(output)
-			print output
+			if self.path.endswith("/restaurants/new"):
+				self.send_response(301)
+
+				ctype, pdict = cgi.parse_header(
+					self.headers.getheader('content-type'))
+				if ctype == 'multipart/form-data':
+					fields = cgi.parse_multipart(self.rfile, pdict)
+				messagecontent = fields.get('newRestaurantName')
+				newRestaurant = Restaurant(name=messagecontent[0])
+				session.add(newRestaurant)
+
+				self.send_header('Content-type', 'text/html')
+				self.send_header('Location', '/restaurants')
+				self.end_headers()
+				return		
+
+			else:
+				self.send_response(301)
+				self.end_headers()
+				ctype, pdict = cgi.parse_header(
+					self.headers.getheader('content-type'))
+				if ctype == 'multipart/form-data':
+					fields = cgi.parse_multipart(self.rfile, pdict)
+					messagecontent = fields.get('message')
+				output = ""
+				output += "<html><body>"
+				output += "<h2> Okay, how about this: </h2>"
+				output += "<h1> %s </h1>" % messagecontent[0]
+				output += """<form method='POST' enctype='multipart/form-data' action='/hello'>
+				<h2>What would you like me to say?</h2><input name='message' type='text'>
+				<input type='submit' value='Submit'></form>"""	
+				output += "</body></html>"	
+				self.wfile.write(output)
+				print output
 		except:
 			pass
 
