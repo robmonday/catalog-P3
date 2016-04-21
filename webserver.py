@@ -59,7 +59,7 @@ class webServerHandler(BaseHTTPRequestHandler):
 				output += "<a href='/restaurants/new'>Add New Restaurant</a>"				
 				output += "<h2>Current Set</h2>"					
 				for restaurant in restaurants:					# Adding restaurant query results to output
-					output += '%s<br><a href="/edit/%s">Edit</a><br><a href="/delete/%s">Delete</a><p>' % (restaurant.name, restaurant.id, restaurant.id) #before
+					output += '%s<br><a href="%s/edit/">Edit</a><br><a href="%s/delete/">Delete</a><p>' % (restaurant.name, restaurant.id, restaurant.id) #before
 					#output += restaurant.name+'<br><a href="#">Edit</a><br><a href="#">Delete</a><p>' #after					
 				output += "</body></html>"	
 				self.wfile.write(output)
