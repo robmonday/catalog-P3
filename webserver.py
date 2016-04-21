@@ -54,8 +54,6 @@ class webServerHandler(BaseHTTPRequestHandler):
 				output += "<h1>List of Restaurants:</h1>"
 
 				restaurants = session.query(Restaurant).all()	# SQLalchemy request for restaurant list
-				print 'rob: here is what the raw output returned by query'
-				print restaurants
 				for restaurant in restaurants:					# Add to output
 					output += '<li>'+restaurant.name+'</li>'
 					
@@ -63,6 +61,24 @@ class webServerHandler(BaseHTTPRequestHandler):
 				self.wfile.write(output)
 				print output
 				return
+
+			if self.path.endswith("/menuitem"):  # Rob added this as extra credit
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+				output = ""
+				output += "<html><body>"
+				output += "<h1>List of Menu Items:</h1>"
+				output += "<table style='width:80%'><tr><th>Name</th><th>Price</th><th>Course</th><th>Description</th></tr>"
+
+				items = session.query(MenuItem).all()	# SQLalchemy request for restaurant list
+				for item in items:				
+					output += '<tr><td>'+item.name+'</td><td> '+item.price+'</td><td> '+item.course+'</td><td> '+item.description+'</td></tr>'
+				output += "</table>"
+				output += "</body></html>"	
+				self.wfile.write(output)
+				print output
+				return	
 
 		except IOError:
 			self.send_error(404, "File Not Found %s" % self.path)
