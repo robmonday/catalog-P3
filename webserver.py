@@ -57,7 +57,7 @@ class webServerHandler(BaseHTTPRequestHandler):
 				output += "<html><body>"
 				output += "<h1>List of Restaurants:</h1>"				
 				for restaurant in restaurants:					# Adding restaurant query results to output
-					output += '<li>'+restaurant.name+'</li>'
+					output += restaurant.name+'<br><a href="#">Edit</a><br><a href="#">Delete</a><p>'
 				output += "</body></html>"	
 				self.wfile.write(output)
 				print output
