@@ -1,6 +1,15 @@
+# Server configuration
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
 
+# SQLalchemy code configuration
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker 
+from database_setup import Base, Restaurant, MenuItem # importing table schema and declarative base
+engine = create_engine('sqlite:///restaurantmenu.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind = engine)
+session = DBSession()
 
 class webServerHandler(BaseHTTPRequestHandler):
 
@@ -31,6 +40,25 @@ class webServerHandler(BaseHTTPRequestHandler):
 				output += """<form method='POST' enctype='multipart/form-data' action='/hello'>
 				<h2>What would you like me to say?</h2><input name='message' type='text'>
 				<input type='submit' value='Submit'></form>"""	
+				output += "</body></html>"	
+				self.wfile.write(output)
+				print output
+				return
+
+			if self.path.endswith("/restaurant"):
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+				output = ""
+				output += "<html><body>"
+				output += "<h1>List of Restaurants:</h1>"
+
+				restaurants = session.query(Restaurant).all()	# SQLalchemy request for restaurant list
+				print 'rob: here is what the raw output returned by query'
+				print restaurants
+				for restaurant in restaurants:					# Add to output
+					output += '<li>'+restaurant+'</li>'
+					
 				output += "</body></html>"	
 				self.wfile.write(output)
 				print output
