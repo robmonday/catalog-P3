@@ -57,7 +57,7 @@ class webServerHandler(BaseHTTPRequestHandler):
 				print 'rob: here is what the raw output returned by query'
 				print restaurants
 				for restaurant in restaurants:					# Add to output
-					output += '<li>'+restaurant+'</li>'
+					output += '<li>'+restaurant.name+'</li>'
 					
 				output += "</body></html>"	
 				self.wfile.write(output)
