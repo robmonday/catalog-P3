@@ -59,7 +59,7 @@ class webServerHandler(BaseHTTPRequestHandler):
 				output += "<a href='/restaurants/new'>Add New Restaurant</a>"				
 				output += "<h2>Current Set</h2>"					
 				for restaurant in restaurants:					# Adding restaurant query results to output
-					output += '%s<br><a href="%s/edit/">Edit</a><br><a href="%s/delete/">Delete</a><p>' % (restaurant.name, restaurant.id, restaurant.id) #before
+					output += '%s<br><a href="%s/edit">Edit</a><br><a href="%s/delete">Delete</a><p>' % (restaurant.name, restaurant.id, restaurant.id) #before
 					#output += restaurant.name+'<br><a href="#">Edit</a><br><a href="#">Delete</a><p>' #after					
 				output += "</body></html>"	
 				self.wfile.write(output)
@@ -77,7 +77,39 @@ class webServerHandler(BaseHTTPRequestHandler):
 				output += "</body></html>"	
 				self.wfile.write(output)
 				print output
-				return				
+				return
+
+			if self.path.endswith("/edit"):
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+				restaurant_edit = session.query(Restaurant).filter_by(id = 1) #just using id 1 for now
+				output = ""
+				output += "<html><body>"
+				output += "<h1>%s</h1>" % restaurant_edit[0].name		
+				output += "<form method='POST' enctype='multipart/form-data' action='/restaurants/new'>"
+				output += "<input name='newRestaurantName' placeholder='%s'>" % restaurant_edit[0].name
+				output += "<input type='submit' value='Rename'></form>"				
+				output += "</body></html>"	
+				self.wfile.write(output)
+				print output
+				return		
+
+			if self.path.endswith("/delete"):
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+				restaurant_delete = session.query(Restaurant).filter_by(id = 1) #just using id 1 for now
+				output = ""
+				output += "<html><body>"
+				output += "<h1>%s</h1>" % restaurant_delete[0].name		
+				output += "<form method='POST' enctype='multipart/form-data' action='/restaurants/new'>"
+				output += "<input name='newRestaurantName' placeholder='%s'>" % restaurant_delete[0].name
+				output += "<input type='submit' value='Delete'></form>"				
+				output += "</body></html>"	
+				self.wfile.write(output)
+				print output
+				return		
 
 			if self.path.endswith("/menuitems"):  # Rob added this as extra credit
 				self.send_response(200)
