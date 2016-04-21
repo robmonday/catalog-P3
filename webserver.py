@@ -1,11 +1,14 @@
-# Server configuration
+# Import for webserver
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
 
-# SQLalchemy code configuration
+# Import for SQLalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker 
-from database_setup import Base, Restaurant, MenuItem # importing table schema and declarative base
+from sqlalchemy.orm import sessionmaker # CRUD operations
+from database_setup import Base, Restaurant, MenuItem # importing database_setup tables along w/ declarative base
+
+
+# Import for SQLalchemy:  create session and connect to database
 engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
@@ -49,14 +52,12 @@ class webServerHandler(BaseHTTPRequestHandler):
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
+				restaurants = session.query(Restaurant).all()	# SQLalchemy request for restaurant list
 				output = ""
 				output += "<html><body>"
-				output += "<h1>List of Restaurants:</h1>"
-
-				restaurants = session.query(Restaurant).all()	# SQLalchemy request for restaurant list
-				for restaurant in restaurants:					# Add to output
+				output += "<h1>List of Restaurants:</h1>"				
+				for restaurant in restaurants:					# Adding restaurant query results to output
 					output += '<li>'+restaurant.name+'</li>'
-					
 				output += "</body></html>"	
 				self.wfile.write(output)
 				print output
@@ -66,12 +67,11 @@ class webServerHandler(BaseHTTPRequestHandler):
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
+				items = session.query(MenuItem).all()	# SQLalchemy request for restaurant list
 				output = ""
 				output += "<html><body>"
 				output += "<h1>List of Menu Items:</h1>"
 				output += "<table style='width:80%'><tr><th>Name</th><th>Price</th><th>Course</th><th>Description</th></tr>"
-
-				items = session.query(MenuItem).all()	# SQLalchemy request for restaurant list
 				for item in items:				
 					output += '<tr><td>'+item.name+'</td><td> '+item.price+'</td><td> '+item.course+'</td><td> '+item.description+'</td></tr>'
 				output += "</table>"
